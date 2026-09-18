@@ -39,9 +39,9 @@ def read_sheet() -> int:
         last_values = int(values[-1][0].replace(" km", ""))
         print(f"last values is: {last_values}")
     else: 
-        print("ไม่พบข้อมูล")
+        print("No data found")
         time.sleep(.5)
-        print("กำลังค้นหา...")
+        print("Searching...")
         time.sleep(2.5)
         return read_sheet()
     return last_values
@@ -108,9 +108,9 @@ def main() -> None:
     
     #=========================================== Input =======================================================
     
-    fuel_data.update({"CurrentOdometer": int(input("เลขไมล์ปัจจุบัน: "))})
-    fuel_data.update({"Liters":float(input("เติมน้ำมันกี่ลิตร: "))})
-    fuel_data.update({"TotalPrice":int(input("เติมน้ำมันกี่บาท: "))})
+    fuel_data.update({"CurrentOdometer": int(input("Current odometer: "))})
+    fuel_data.update({"Liters":float(input("Liters filled: "))})
+    fuel_data.update({"TotalPrice":int(input("Total price paid (THB): "))})
     update_fuel_data(fuel_data)
     #========================================== Method =================================================
 
