@@ -1,0 +1,92 @@
+
+import gspread
+from google.oauth2.service_account import Credentials
+
+scopes = [
+    "https://ww.googleapis.com/auth/spreadsheets"
+]
+creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+client = gspread.authorize(creds)
+
+sheet_id = "1kd_8lUj2pv3CBCygY5p6FdGjq5mQX9TVq8hHs_mfCrk"
+sheet = client.open_by_key(sheet_id)
+
+
+
+
+default_stat:dict[str, str | float] = {
+    "FUEL_TYPE": "E20",
+    "FUEL_PRICE": 32.69,
+    "CAR_MODEL" : "Mitsubishi Mirage",
+    "TANK_CAPACITY" : 35.0
+}
+
+
+# ======================== READ FORM DATA =================================
+def get_previous_odometer() -> int:
+    return 0
+# =====================================================================
+
+    
+    
+    
+# ======================== CALCULATOR =================================
+def actual_price(fuel_money:int, fuel_liters:float) -> float: # Baht/L
+    return fuel_money / fuel_liters
+
+def distance(odometer:int , previous_odometer:int) -> int:
+    return odometer - previous_odometer if previous_odometer != 0 else odometer - odometer
+
+def fuel_efficiency(distance:float, fuel_liters:float) -> float:  #Km/L
+    return distance / fuel_liters if distance != 0 else 0
+
+def cost_per_km(fuel_money:int , distance:float) -> float: # Baht/km
+    return fuel_money / distance if distance != 0 else 0
+
+def liters_per_bar(fuel_liters:float , fuel_bars:int) -> float: #L/bar
+    return fuel_liters / fuel_bars
+
+def estimated_distance(fuel_liters:float, fuel_efficiency:float) -> float:
+    return fuel_liters * fuel_efficiency
+# =====================================================================
+
+
+
+# sample:dict[str, str|float] = {
+#     "Liters": 15.22,
+#     "Money": 500,
+#     "Miles": 7878,
+#     "Bars": 5
+# }
+
+
+
+def main() -> None:
+    
+    fuel_data:dict[str, str|float|int] = {}  
+    
+    #============================================= Input =======================================================
+    
+    fuel_data.update({"CurrentOdometer": int(input("เลขไมล์ปัจจุบัน: "))})
+    fuel_data.update({"Liters":float(input("เติมน้ำมันกี่ลิตร: "))})
+    fuel_data.update({"TotalPrice":int(input("เติมน้ำมันกี่บาท: "))})
+    fuel_data.update({"FuelBar":int(input("เกจน้ำมันเพิ่มกี่ขีด: "))})
+    
+    
+     #========================================== External Data =================================================
+    previous_odometer:int = get_previous_odometer()
+    fuel_data.update({"ActualPrice": actual_price(fuel_data["TotalPrice"], fuel_data["Liters"])})
+    fuel_data.update({"PreviousOdometer": previous_odometer})
+    fuel_data.update({"Distance":distance(fuel_data["CurrentOdometer"], fuel_data["PreviousOdometer"])})
+    fuel_data.update({"FuelEffiency":fuel_efficiency(fuel_data["Distance"], fuel_data["Liters"])})
+    fuel_data.update({"CostPerKm":cost_per_km(fuel_data["TotalPrice"], fuel_data["Distance"])})
+    fuel_data.update({"LitersPerBar":liters_per_bar(fuel_data["Liters"], fuel_data["FuelBar"])})
+    fuel_data.update({"EstimatedDistance":estimated_distance(fuel_data["Liters"], fuel_data["FuelEffiency"])})
+    
+    print(fuel_data)
+
+    
+
+    
+if __name__ == '__main__':
+    main()
