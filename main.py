@@ -1,4 +1,3 @@
-
 import gspread
 import time
 from google.oauth2.service_account import Credentials
@@ -6,7 +5,8 @@ from datetime import datetime
 from calculations import (
     calculate_fuel_price,
     calculate_distance,
-    calculate_fuel_efficiency
+    calculate_fuel_efficiency,
+    calculate_expected_distance
 )
 from summary import update_summary
 
@@ -53,7 +53,18 @@ def get_previous_odometer() -> int:
 
 # ======================== Creatable =================================
 def create_table(fuel_data:dict[str, str|float|int]) -> list[str|int|float]:
-    tables = [str(datetime.now()), default_data["FUEL_TYPE"],default_data["CAR_MODEL"],fuel_data["CurrentOdometer"] ,get_previous_odometer(), fuel_data["Distance"],fuel_data["Liters"],fuel_data["ActualPrice"],fuel_data["TotalPrice"]]
+    tables = [
+        str(datetime.now()),
+        default_data["FUEL_TYPE"],
+        default_data["CAR_MODEL"],
+        fuel_data["CurrentOdometer"],
+        fuel_data["PreviousOdometer"],
+        fuel_data["Distance"],
+        fuel_data["Liters"],
+        fuel_data["ActualPrice"],
+        fuel_data["TotalPrice"],
+        fuel_data["ExpectedDistance"]
+    ]
     return tables
 # ========================================================================
 
@@ -84,7 +95,8 @@ def update_fuel_data(fuel_data: dict[str, str | float | int]) -> None:
     fuel_data.update({"PreviousOdometer": previous_odometer})
     fuel_data.update({"Distance": calculate_distance(fuel_data["CurrentOdometer"], fuel_data["PreviousOdometer"])})
     fuel_data.update({"FuelEffiency": round(calculate_fuel_efficiency(fuel_data["Distance"], fuel_data["Liters"]), 2)})
-
+    fuel_data.update({"ExpectedDistance": round(calculate_expected_distance(fuel_data["Liters"]), 2)})
+    
 def process_fuel_data(fuel_data: dict[str, str | float | int]) -> None:
     print(create_table(fuel_data))
     append_to_sheet(create_table(fuel_data))

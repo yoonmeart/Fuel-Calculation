@@ -44,3 +44,10 @@ def calculate_distance(
 
 def calculate_fuel_efficiency(distance:float, fuel_liters:float) -> float:  #Km/L
     return distance / fuel_liters 
+
+# ============================================================
+# EXPECTED DISTANCE
+# ============================================================
+
+def calculate_expected_distance(liters: float, rate: float = 18.30) -> float:
+    return liters * rate
