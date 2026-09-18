@@ -8,11 +8,20 @@ from main import (
 )
 
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv("bot.env")
+
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+if TOKEN is None:
+    raise ValueError("DISCORD_TOKEN not found")
+
 # ============================================================
 # CONFIG
 # ============================================================
 
-TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 ALLOWED_CHANNEL_ID = 1542247032108875979
 

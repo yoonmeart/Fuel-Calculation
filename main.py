@@ -10,6 +10,7 @@ from calculations import (
 )
 from summary import update_summary
 
+
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets"
 ]
